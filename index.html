@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة تقسيم الفاتورة</title>
+    <meta name="theme-color" content="#5eead4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Splitify">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/moukkamal2497/Splitify/main/icon.png">
+    <link rel="icon" href="https://raw.githubusercontent.com/moukkamal2497/Splitify/main/icon.png">
+    <title>Splitify - Bill Splitter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -32,17 +38,17 @@
     <div class="container mx-auto px-4 py-6 max-w-2xl">
         <!-- Header -->
         <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold mb-2 text-blue-400">🧾 حاسبة تقسيم الفاتورة</h1>
-            <p class="text-gray-400 text-sm">كل شخص يدفع حسب طلبه</p>
+            <h1 class="text-3xl font-bold mb-2 text-blue-400">🧾 Bill Splitter </h1>
+            <p class="text-gray-400 text-sm">Each person pays according to their order</p>
         </div>
 
         <!-- Settings -->
         <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
-            <h2 class="text-lg font-bold mb-4 text-blue-400">⚙️ إعدادات الفاتورة</h2>
+            <h2 class="text-lg font-bold mb-4 text-blue-400">⚙️ Bill Settings</h2>
             
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="block text-gray-300 text-sm font-semibold mb-2">🔧 الخدمة (%)</label>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">🔧 Service (%)</label>
                     <input 
                         type="number" 
                         id="servicePercent" 
@@ -55,7 +61,7 @@
                     >
                 </div>
                 <div>
-                    <label class="block text-gray-300 text-sm font-semibold mb-2">📊 الضريبة (%)</label>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">📊 Tax (%)</label>
                     <input 
                         type="number" 
                         id="taxPercent" 
@@ -72,24 +78,24 @@
 
         <!-- Add Person Section -->
         <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
-            <h2 class="text-lg font-bold mb-4 text-green-400">➕ إضافة شخص</h2>
+            <h2 class="text-lg font-bold mb-4 text-green-400">➕ Add Person</h2>
             
             <div class="mb-3">
-                <label class="block text-gray-300 text-sm font-semibold mb-2">👤 اسم الشخص</label>
+                <label class="block text-gray-300 text-sm font-semibold mb-2">👤 Person's Name</label>
                 <input 
                     type="text" 
                     id="personName" 
-                    placeholder="مثال: أحمد"
+                    placeholder="Ex: Moaaz"
                     class="w-full bg-gray-700 text-white text-lg px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
 
             <div class="mb-4">
-                <label class="block text-gray-300 text-sm font-semibold mb-2">💰 قيمة طلبه (جنيه)</label>
+                <label class="block text-gray-300 text-sm font-semibold mb-2">💰 Order Value (EGP)</label>
                 <input 
                     type="number" 
                     id="personAmount" 
-                    placeholder="مثال: 150"
+                    placeholder="Ex: 150"
                     class="w-full bg-gray-700 text-white text-lg px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                     step="0.01"
                     min="0"
@@ -99,7 +105,7 @@
             <button 
                 onclick="addPerson()" 
                 class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
-                إضافة الشخص
+                Add Person
             </button>
         </div>
 
@@ -110,24 +116,24 @@
         <div id="summary" class="hidden">
             <!-- Total Bill -->
             <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-4">
-                <h2 class="text-lg font-bold mb-3 text-blue-400 border-b border-gray-700 pb-2">📋 ملخص الفاتورة</h2>
+                <h2 class="text-lg font-bold mb-3 text-blue-400 border-b border-gray-700 pb-2">📋 Bill Summary</h2>
                 
                 <div class="space-y-2 text-gray-300 text-sm">
                     <div class="flex justify-between items-center">
-                        <span>إجمالي الطلبات:</span>
-                        <span class="font-semibold text-base" id="totalSubtotal">0.00 جنيه</span>
+                        <span>Total Orders:</span>
+                        <span class="font-semibold text-base" id="totalSubtotal">0.00 EGP</span>
                     </div>
                     <div class="flex justify-between items-center text-green-400">
-                        <span>الخدمة (<span id="displayServicePercent">12</span>%):</span>
-                        <span class="font-semibold text-base" id="totalService">0.00 جنيه</span>
+                        <span>Service (<span id="displayServicePercent">12</span>%):</span>
+                        <span class="font-semibold text-base" id="totalService">0.00 EGP</span>
                     </div>
                     <div class="flex justify-between items-center text-purple-400">
-                        <span>الضريبة (<span id="displayTaxPercent">14</span>%):</span>
-                        <span class="font-semibold text-base" id="totalTax">0.00 جنيه</span>
+                        <span>Tax (<span id="displayTaxPercent">14</span>%):</span>
+                        <span class="font-semibold text-base" id="totalTax">0.00 EGP</span>
                     </div>
                     <div class="flex justify-between items-center text-xl font-bold text-blue-300 border-t border-gray-700 pt-2 mt-2">
-                        <span>المجموع الكلي:</span>
-                        <span id="grandTotal">0.00 جنيه</span>
+                        <span>Grand Total:</span>
+                        <span id="grandTotal">0.00 EGP</span>
                     </div>
                 </div>
             </div>
@@ -136,7 +142,7 @@
             <button 
                 onclick="resetAll()" 
                 class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
-                🔄 إعادة ضبط الكل
+                🔄 Reset All
             </button>
         </div>
     </div>
@@ -149,12 +155,12 @@
             const amount = parseFloat(document.getElementById('personAmount').value);
 
             if (!name) {
-                alert('من فضلك أدخل اسم الشخص');
+                alert('Please enter person\'s name');
                 return;
             }
 
             if (!amount || amount <= 0) {
-                alert('من فضلك أدخل قيمة الطلب');
+                alert('Please enter order value');
                 return;
             }
 
@@ -190,22 +196,22 @@
                                 <span class="text-xl">👤</span>
                                 <span class="font-bold text-lg text-blue-300">${person.name}</span>
                             </div>
-                            <div class="text-gray-400 text-sm space-y-1 mr-8">
-                                <div>طلبه: <span class="text-white font-semibold">${person.amount.toFixed(2)} جنيه</span></div>
-                                <div class="text-green-400">خدمة: <span class="text-white font-semibold" id="service-${index}">0.00 جنيه</span></div>
-                                <div class="text-purple-400">ضريبة: <span class="text-white font-semibold" id="tax-${index}">0.00 جنيه</span></div>
+                            <div class="text-gray-400 text-sm space-y-1 ml-8">
+                                <div>Order: <span class="text-white font-semibold">${person.amount.toFixed(2)} EGP</span></div>
+                                <div class="text-green-400">Service: <span class="text-white font-semibold" id="service-${index}">0.00 EGP</span></div>
+                                <div class="text-purple-400">Tax: <span class="text-white font-semibold" id="tax-${index}">0.00 EGP</span></div>
                             </div>
                         </div>
                         <button 
                             onclick="removePerson(${index})"
                             class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm transition">
-                            حذف
+                            Delete
                         </button>
                     </div>
                     <div class="border-t border-gray-700 pt-2 mt-2">
                         <div class="flex justify-between items-center">
-                            <span class="text-yellow-400 font-semibold">المطلوب منه:</span>
-                            <span class="text-2xl font-bold text-yellow-300" id="total-${index}">0.00 جنيه</span>
+                            <span class="text-yellow-400 font-semibold">They Pay:</span>
+                            <span class="text-2xl font-bold text-yellow-300" id="total-${index}">0.00 EGP</span>
                         </div>
                     </div>
                 </div>
@@ -231,9 +237,9 @@
                 const taxAmount = (subtotal + serviceAmount) * (taxPercent / 100);
                 const personTotal = subtotal + serviceAmount + taxAmount;
 
-                document.getElementById(`service-${index}`).textContent = serviceAmount.toFixed(2) + ' جنيه';
-                document.getElementById(`tax-${index}`).textContent = taxAmount.toFixed(2) + ' جنيه';
-                document.getElementById(`total-${index}`).textContent = personTotal.toFixed(2) + ' جنيه';
+                document.getElementById(`service-${index}`).textContent = serviceAmount.toFixed(2) + ' EGP';
+                document.getElementById(`tax-${index}`).textContent = taxAmount.toFixed(2) + ' EGP';
+                document.getElementById(`total-${index}`).textContent = personTotal.toFixed(2) + ' EGP';
 
                 totalSubtotal += subtotal;
                 totalServiceAmount += serviceAmount;
@@ -241,16 +247,16 @@
                 grandTotal += personTotal;
             });
 
-            document.getElementById('totalSubtotal').textContent = totalSubtotal.toFixed(2) + ' جنيه';
+            document.getElementById('totalSubtotal').textContent = totalSubtotal.toFixed(2) + ' EGP';
             document.getElementById('displayServicePercent').textContent = servicePercent.toFixed(1);
-            document.getElementById('totalService').textContent = totalServiceAmount.toFixed(2) + ' جنيه';
+            document.getElementById('totalService').textContent = totalServiceAmount.toFixed(2) + ' EGP';
             document.getElementById('displayTaxPercent').textContent = taxPercent.toFixed(1);
-            document.getElementById('totalTax').textContent = totalTaxAmount.toFixed(2) + ' جنيه';
-            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2) + ' جنيه';
+            document.getElementById('totalTax').textContent = totalTaxAmount.toFixed(2) + ' EGP';
+            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2) + ' EGP';
         }
 
         function resetAll() {
-            if (confirm('هل تريد حذف كل البيانات؟')) {
+            if (confirm('Do you want to delete all data?')) {
                 people = [];
                 document.getElementById('servicePercent').value = '12';
                 document.getElementById('taxPercent').value = '14';
@@ -266,5 +272,4 @@
         });
     </script>
 </body>
-
 </html>
