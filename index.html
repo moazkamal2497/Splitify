@@ -44,11 +44,11 @@
 
         <!-- Settings -->
         <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
-            <h2 class="text-lg font-bold mb-4 text-blue-400">⚙ Bill Settings</h2>
+            <h2 class="text-lg font-bold mb-4 text-blue-400">🍽️ Bill Settings</h2>
             
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="block text-gray-300 text-sm font-semibold mb-2">🔧 Service (%)</label>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">🔔 Service (%)</label>
                     <input 
                         type="number" 
                         id="servicePercent" 
@@ -140,7 +140,7 @@
 
             <!-- Reset Button -->
             <button 
-                onclick="resetAll()" 
+                onclick="alert('Button clicked!'); handleReset();"
                 class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
                 🔄 Reset All
             </button>
@@ -159,8 +159,8 @@
                 return;
             }
 
-            if (!amount || amount <= 0) {
-                alert('Please enter order value');
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid order value');
                 return;
             }
 
@@ -171,6 +171,12 @@
             
             renderPeople();
             calculateAll();
+            
+            // Scroll to the newly added person
+            setTimeout(() => {
+                const peopleList = document.getElementById('peopleList');
+                peopleList.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 100);
         }
 
         function removePerson(index) {
@@ -237,9 +243,9 @@
                 const taxAmount = (subtotal + serviceAmount) * (taxPercent / 100);
                 const personTotal = subtotal + serviceAmount + taxAmount;
 
-                document.getElementById(service-${index}).textContent = serviceAmount.toFixed(2) + ' EGP';
-                document.getElementById(tax-${index}).textContent = taxAmount.toFixed(2) + ' EGP';
-                document.getElementById(total-${index}).textContent = personTotal.toFixed(2) + ' EGP';
+                document.getElementById(`service-${index}`).textContent = serviceAmount.toFixed(2) + ' EGP';
+                document.getElementById(`tax-${index}`).textContent = taxAmount.toFixed(2) + ' EGP';
+                document.getElementById(`total-${index}`).textContent = personTotal.toFixed(2) + ' EGP';
 
                 totalSubtotal += subtotal;
                 totalServiceAmount += serviceAmount;
@@ -256,11 +262,40 @@
         }
 
         function resetAll() {
-            if (confirm('Do you want to delete all data?')) {
+            try {
+                const userConfirmed = window.confirm('Do you want to delete all data?');
+                if (userConfirmed) {
+                    // Clear the people array
+                    people = [];
+                    
+                    // Reset form fields
+                    document.getElementById('servicePercent').value = '12';
+                    document.getElementById('taxPercent').value = '14';
+                    document.getElementById('personName').value = '';
+                    document.getElementById('personAmount').value = '';
+                    
+                    // Clear the display
+                    document.getElementById('peopleList').innerHTML = '';
+                    document.getElementById('summary').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Reset error:', error);
+                alert('Error resetting: ' + error.message);
+            }
+        }
+
+        function handleReset() {
+            alert('Reset button clicked!');
+            const userConfirmed = confirm('Do you want to delete all data?');
+            if (userConfirmed) {
                 people = [];
                 document.getElementById('servicePercent').value = '12';
                 document.getElementById('taxPercent').value = '14';
-                renderPeople();
+                document.getElementById('personName').value = '';
+                document.getElementById('personAmount').value = '';
+                document.getElementById('peopleList').innerHTML = '';
+                document.getElementById('summary').classList.add('hidden');
+                alert('Reset completed!');
             }
         }
 
