@@ -57,7 +57,6 @@
                         step="0.1"
                         min="0"
                         max="100"
-                        onchange="calculateAll()"
                     >
                 </div>
                 <div>
@@ -70,7 +69,6 @@
                         step="0.1"
                         min="0"
                         max="100"
-                        onchange="calculateAll()"
                     >
                 </div>
             </div>
@@ -103,7 +101,7 @@
             </div>
 
             <button 
-                onclick="addPerson()" 
+                id="addBtn"
                 class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
                 Add Person
             </button>
@@ -140,7 +138,7 @@
 
             <!-- Reset Button -->
             <button 
-                onclick="handleReset()"
+                id="resetBtn"
                 class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
                 🔄 Reset All
             </button>
@@ -172,7 +170,6 @@
             renderPeople();
             calculateAll();
             
-            // Scroll to the newly added person
             setTimeout(() => {
                 const peopleList = document.getElementById('peopleList');
                 peopleList.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -261,32 +258,20 @@
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2) + ' EGP';
         }
 
-        function resetAll() {
-            try {
-                const userConfirmed = window.confirm('Do you want to delete all data?');
-                if (userConfirmed) {
-                    // Clear the people array
-                    people = [];
-                    
-                    // Reset form fields
-                    document.getElementById('servicePercent').value = '12';
-                    document.getElementById('taxPercent').value = '14';
-                    document.getElementById('personName').value = '';
-                    document.getElementById('personAmount').value = '';
-                    
-                    // Clear the display
-                    document.getElementById('peopleList').innerHTML = '';
-                    document.getElementById('summary').classList.add('hidden');
-                }
-            } catch (error) {
-                console.error('Reset error:', error);
-                alert('Error resetting: ' + error.message);
+        // Event Listeners - Set up once when page loads
+        document.getElementById('addBtn').addEventListener('click', addPerson);
+        
+        document.getElementById('personAmount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addPerson();
             }
-        }
+        });
 
-        function handleReset() {
-            const userConfirmed = confirm('Do you want to delete all data?');
-            if (userConfirmed) {
+        document.getElementById('servicePercent').addEventListener('change', calculateAll);
+        document.getElementById('taxPercent').addEventListener('change', calculateAll);
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('Do you want to delete all data?')) {
                 people = [];
                 document.getElementById('servicePercent').value = '12';
                 document.getElementById('taxPercent').value = '14';
@@ -294,13 +279,6 @@
                 document.getElementById('personAmount').value = '';
                 document.getElementById('peopleList').innerHTML = '';
                 document.getElementById('summary').classList.add('hidden');
-            }
-        }
-
-        // Allow Enter key to add person
-        document.getElementById('personAmount').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addPerson();
             }
         });
     </script>
