@@ -32,6 +32,45 @@
         .person-card:hover {
             transform: translateY(-2px);
         }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4b5563;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #3b82f6;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen text-white pb-8">
@@ -39,7 +78,21 @@
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold mb-2 text-blue-400">🧾 Bill Splitter </h1>
-            <p class="text-gray-400 text-sm">Each person pays according to their order</p>
+            <p class="text-gray-400 text-sm">Split bills your way</p>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-blue-400 mb-1">Splitting Mode</h3>
+                    <p class="text-sm text-gray-400" id="modeDescription">Individual orders</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="modeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
 
         <!-- Settings -->
@@ -74,41 +127,106 @@
             </div>
         </div>
 
-        <!-- Add Person Section -->
-        <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
-            <h2 class="text-lg font-bold mb-4 text-green-400">➕ Add Person</h2>
-            
-            <div class="mb-3">
-                <label class="block text-gray-300 text-sm font-semibold mb-2">👤 Person's Name</label>
-                <input 
-                    type="text" 
-                    id="personName" 
-                    placeholder="Ex: Moaaz"
-                    class="w-full bg-gray-700 text-white text-lg px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
+        <!-- Individual Mode -->
+        <div id="individualMode">
+            <!-- Add Person Section -->
+            <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
+                <h2 class="text-lg font-bold mb-4 text-green-400">➕ Add Person</h2>
+                
+                <div class="mb-3">
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">👤 Person's Name</label>
+                    <input 
+                        type="text" 
+                        id="personName" 
+                        placeholder="Ex: Moaaz"
+                        class="w-full bg-gray-700 text-white text-lg px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+
+                <!-- Items List -->
+                <div class="mb-3">
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">🍔 Items</label>
+                    <div id="itemsList" class="space-y-2 mb-3"></div>
+                    
+                    <div class="flex gap-2 mb-2">
+                        <input 
+                            type="text" 
+                            id="itemName" 
+                            placeholder="Item name (e.g., Sandwich)"
+                            class="flex-1 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        >
+                        <input 
+                            type="number" 
+                            id="itemPrice" 
+                            placeholder="Price"
+                            class="w-24 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            step="0.01"
+                            min="0"
+                        >
+                        <button 
+                            id="addItemBtn"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition">
+                            Add
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-700 rounded-lg p-3 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300 font-semibold">Total:</span>
+                        <span class="text-xl font-bold text-yellow-300" id="personTotal">0.00 EGP</span>
+                    </div>
+                </div>
+
+                <button 
+                    id="addPersonBtn"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
+                    Add Person
+                </button>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-300 text-sm font-semibold mb-2">💰 Order Value (EGP)</label>
-                <input 
-                    type="number" 
-                    id="personAmount" 
-                    placeholder="Ex: 150"
-                    class="w-full bg-gray-700 text-white text-lg px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    step="0.01"
-                    min="0"
-                >
-            </div>
-
-            <button 
-                id="addBtn"
-                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
-                Add Person
-            </button>
+            <!-- People List -->
+            <div id="peopleList" class="space-y-3 mb-5"></div>
         </div>
 
-        <!-- People List -->
-        <div id="peopleList" class="space-y-3 mb-5"></div>
+        <!-- Split Equally Mode -->
+        <div id="splitEquallyMode" class="hidden">
+            <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
+                <h2 class="text-lg font-bold mb-4 text-green-400">💰 Total Bill</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">Bill Subtotal (EGP)</label>
+                    <input 
+                        type="number" 
+                        id="totalBillAmount" 
+                        placeholder="Ex: 500"
+                        class="w-full bg-gray-700 text-white text-lg px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        step="0.01"
+                        min="0"
+                    >
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">👥 Number of People</label>
+                    <input 
+                        type="number" 
+                        id="numPeople" 
+                        value="2"
+                        class="w-full bg-gray-700 text-white text-lg px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        min="1"
+                    >
+                </div>
+
+                <button 
+                    id="calculateEqualBtn"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition transform active:scale-95">
+                    Calculate
+                </button>
+            </div>
+
+            <!-- Equal Split Results -->
+            <div id="equalSplitResults" class="hidden space-y-4"></div>
+        </div>
 
         <!-- Summary -->
         <div id="summary" class="hidden">
@@ -147,34 +265,119 @@
 
     <script>
         let people = [];
+        let currentItems = [];
+        let isEqualMode = false;
 
-        function addPerson() {
+        // Mode Toggle
+        document.getElementById('modeToggle').addEventListener('change', function() {
+            isEqualMode = this.checked;
+            const individualMode = document.getElementById('individualMode');
+            const splitEquallyMode = document.getElementById('splitEquallyMode');
+            const modeDesc = document.getElementById('modeDescription');
+            const summary = document.getElementById('summary');
+
+            if (isEqualMode) {
+                individualMode.classList.add('hidden');
+                splitEquallyMode.classList.remove('hidden');
+                summary.classList.add('hidden');
+                modeDesc.textContent = 'Split equally';
+            } else {
+                individualMode.classList.remove('hidden');
+                splitEquallyMode.classList.add('hidden');
+                document.getElementById('equalSplitResults').classList.add('hidden');
+                modeDesc.textContent = 'Individual orders';
+            }
+        });
+
+        // Add Item to current person
+        document.getElementById('addItemBtn').addEventListener('click', function() {
+            const itemName = document.getElementById('itemName').value.trim();
+            const itemPrice = parseFloat(document.getElementById('itemPrice').value);
+
+            if (!itemName) {
+                alert('Please enter item name');
+                return;
+            }
+
+            if (isNaN(itemPrice) || itemPrice <= 0) {
+                alert('Please enter valid price');
+                return;
+            }
+
+            currentItems.push({ name: itemName, price: itemPrice });
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemPrice').value = '';
+            
+            renderCurrentItems();
+            updatePersonTotal();
+        });
+
+        function renderCurrentItems() {
+            const container = document.getElementById('itemsList');
+            if (currentItems.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">No items added yet</p>';
+                return;
+            }
+
+            container.innerHTML = currentItems.map((item, index) => `
+                <div class="flex justify-between items-center bg-gray-700 rounded-lg px-3 py-2">
+                    <span class="text-sm text-white">${item.name}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-semibold text-yellow-300">${item.price.toFixed(2)} EGP</span>
+                        <button onclick="removeItem(${index})" class="text-red-400 hover:text-red-300">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeItem(index) {
+            currentItems.splice(index, 1);
+            renderCurrentItems();
+            updatePersonTotal();
+        }
+
+        function updatePersonTotal() {
+            const total = currentItems.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('personTotal').textContent = total.toFixed(2) + ' EGP';
+        }
+
+        // Add Person with items
+        document.getElementById('addPersonBtn').addEventListener('click', function() {
             const name = document.getElementById('personName').value.trim();
-            const amount = parseFloat(document.getElementById('personAmount').value);
 
             if (!name) {
                 alert('Please enter person\'s name');
                 return;
             }
 
-            if (isNaN(amount) || amount <= 0) {
-                alert('Please enter a valid order value');
+            if (currentItems.length === 0) {
+                alert('Please add at least one item');
                 return;
             }
 
-            people.push({ name, amount });
+            const totalAmount = currentItems.reduce((sum, item) => sum + item.price, 0);
+            
+            people.push({ 
+                name, 
+                amount: totalAmount,
+                items: [...currentItems]
+            });
             
             document.getElementById('personName').value = '';
-            document.getElementById('personAmount').value = '';
+            currentItems = [];
+            renderCurrentItems();
+            updatePersonTotal();
             
             renderPeople();
             calculateAll();
-            
-            setTimeout(() => {
-                const peopleList = document.getElementById('peopleList');
-                peopleList.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }, 100);
-        }
+        });
+
+        // Enter key support for item input
+        document.getElementById('itemPrice').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('addItemBtn').click();
+            }
+        });
 
         function removePerson(index) {
             people.splice(index, 1);
@@ -195,12 +398,17 @@
                 <div class="bg-gray-800 rounded-xl p-4 shadow-lg person-card">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
+                            <div class="flex items-center gap-2 mb-2">
                                 <span class="text-xl">👤</span>
                                 <span class="font-bold text-lg text-blue-300">${person.name}</span>
                             </div>
+                            <div class="text-gray-400 text-xs space-y-1 ml-8 mb-2">
+                                ${person.items.map(item => `
+                                    <div>• ${item.name}: <span class="text-white">${item.price.toFixed(2)} EGP</span></div>
+                                `).join('')}
+                            </div>
                             <div class="text-gray-400 text-sm space-y-1 ml-8">
-                                <div>Order: <span class="text-white font-semibold">${person.amount.toFixed(2)} EGP</span></div>
+                                <div>Subtotal: <span class="text-white font-semibold">${person.amount.toFixed(2)} EGP</span></div>
                                 <div class="text-green-400">Service: <span class="text-white font-semibold" id="service-${index}">0.00 EGP</span></div>
                                 <div class="text-purple-400">Tax: <span class="text-white font-semibold" id="tax-${index}">0.00 EGP</span></div>
                             </div>
@@ -258,29 +466,86 @@
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2) + ' EGP';
         }
 
-        // Event Listeners - Set up once when page loads
-        document.getElementById('addBtn').addEventListener('click', addPerson);
-        
-        document.getElementById('personAmount').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addPerson();
+        // Equal Split Mode
+        document.getElementById('calculateEqualBtn').addEventListener('click', function() {
+            const totalBill = parseFloat(document.getElementById('totalBillAmount').value);
+            const numPeople = parseInt(document.getElementById('numPeople').value);
+            const servicePercent = parseFloat(document.getElementById('servicePercent').value) || 0;
+            const taxPercent = parseFloat(document.getElementById('taxPercent').value) || 0;
+
+            if (isNaN(totalBill) || totalBill <= 0) {
+                alert('Please enter valid bill amount');
+                return;
+            }
+
+            if (isNaN(numPeople) || numPeople < 1) {
+                alert('Please enter valid number of people');
+                return;
+            }
+
+            const serviceAmount = totalBill * (servicePercent / 100);
+            const taxAmount = (totalBill + serviceAmount) * (taxPercent / 100);
+            const grandTotal = totalBill + serviceAmount + taxAmount;
+            const perPerson = grandTotal / numPeople;
+
+            const resultsContainer = document.getElementById('equalSplitResults');
+            resultsContainer.innerHTML = `
+                <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl">
+                    <h2 class="text-lg font-bold mb-3 text-blue-400 border-b border-gray-700 pb-2">📋 Bill Breakdown</h2>
+                    <div class="space-y-2 text-gray-300 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span>Subtotal:</span>
+                            <span class="font-semibold text-base">${totalBill.toFixed(2)} EGP</span>
+                        </div>
+                        <div class="flex justify-between items-center text-green-400">
+                            <span>Service (${servicePercent.toFixed(1)}%):</span>
+                            <span class="font-semibold text-base">${serviceAmount.toFixed(2)} EGP</span>
+                        </div>
+                        <div class="flex justify-between items-center text-purple-400">
+                            <span>Tax (${taxPercent.toFixed(1)}%):</span>
+                            <span class="font-semibold text-base">${taxAmount.toFixed(2)} EGP</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xl font-bold text-blue-300 border-t border-gray-700 pt-2 mt-2">
+                            <span>Grand Total:</span>
+                            <span>${grandTotal.toFixed(2)} EGP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 shadow-2xl glow">
+                    <div class="text-center">
+                        <p class="text-green-200 text-sm mb-1">👤 Each Person Pays</p>
+                        <p class="text-4xl font-bold">${perPerson.toFixed(2)} EGP</p>
+                        <p class="text-green-200 text-xs mt-2">Split among ${numPeople} people</p>
+                    </div>
+                </div>
+            `;
+            resultsContainer.classList.remove('hidden');
+        });
+
+        // Reset functionality
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('Do you want to delete all data?')) {
+                people = [];
+                currentItems = [];
+                document.getElementById('servicePercent').value = '12';
+                document.getElementById('taxPercent').value = '14';
+                document.getElementById('personName').value = '';
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemPrice').value = '';
+                document.getElementById('peopleList').innerHTML = '';
+                document.getElementById('summary').classList.add('hidden');
+                renderCurrentItems();
+                updatePersonTotal();
             }
         });
 
         document.getElementById('servicePercent').addEventListener('change', calculateAll);
         document.getElementById('taxPercent').addEventListener('change', calculateAll);
 
-        document.getElementById('resetBtn').addEventListener('click', function() {
-            if (confirm('Do you want to delete all data?')) {
-                people = [];
-                document.getElementById('servicePercent').value = '12';
-                document.getElementById('taxPercent').value = '14';
-                document.getElementById('personName').value = '';
-                document.getElementById('personAmount').value = '';
-                document.getElementById('peopleList').innerHTML = '';
-                document.getElementById('summary').classList.add('hidden');
-            }
-        });
+        // Initialize
+        renderCurrentItems();
+        updatePersonTotal();
     </script>
 </body>
 </html>
