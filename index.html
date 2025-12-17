@@ -83,7 +83,7 @@
 
         <!-- Mode Toggle -->
         <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mb-4">
                 <div>
                     <h3 class="text-lg font-bold text-blue-400 mb-1">Splitting Mode</h3>
                     <p class="text-sm text-gray-400" id="modeDescription">Individual orders</p>
@@ -93,36 +93,49 @@
                     <span class="slider"></span>
                 </label>
             </div>
-        </div>
 
-        <!-- Settings -->
-        <div class="bg-gray-800 rounded-2xl p-5 shadow-2xl mb-5">
-            <h2 class="text-lg font-bold mb-4 text-blue-400">🍽️ Bill Settings</h2>
-            
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label class="block text-gray-300 text-sm font-semibold mb-2">🔔 Service (%)</label>
-                    <input 
-                        type="number" 
-                        id="servicePercent" 
-                        value="12"
-                        class="w-full bg-gray-700 text-white text-lg px-3 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
-                        step="0.1"
-                        min="0"
-                        max="100"
-                    >
+            <!-- Service & Tax Toggles -->
+            <div class="space-y-3 pt-4 border-t border-gray-700">
+                <!-- Service -->
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 flex items-center gap-3">
+                        <label class="text-gray-300 text-sm font-semibold whitespace-nowrap">🔔 Service</label>
+                        <input 
+                            type="number" 
+                            id="servicePercent" 
+                            value="12"
+                            class="flex-1 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                            step="0.1"
+                            min="0"
+                            max="100"
+                        >
+                        <span class="text-gray-400 text-sm">%</span>
+                    </div>
+                    <label class="toggle-switch flex-shrink-0">
+                        <input type="checkbox" id="serviceToggle" checked>
+                        <span class="slider"></span>
+                    </label>
                 </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-semibold mb-2">📊 Tax (%)</label>
-                    <input 
-                        type="number" 
-                        id="taxPercent" 
-                        value="14"
-                        class="w-full bg-gray-700 text-white text-lg px-3 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        step="0.1"
-                        min="0"
-                        max="100"
-                    >
+
+                <!-- Tax -->
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 flex items-center gap-3">
+                        <label class="text-gray-300 text-sm font-semibold whitespace-nowrap">📊 Tax</label>
+                        <input 
+                            type="number" 
+                            id="taxPercent" 
+                            value="14"
+                            class="flex-1 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                            step="0.1"
+                            min="0"
+                            max="100"
+                        >
+                        <span class="text-gray-400 text-sm">%</span>
+                    </div>
+                    <label class="toggle-switch flex-shrink-0">
+                        <input type="checkbox" id="taxToggle" checked>
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -145,27 +158,21 @@
 
                 <!-- Items List -->
                 <div class="mb-3">
-                    <label class="block text-gray-300 text-sm font-semibold mb-2">🍔 Items</label>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2">🍔 Add Items</label>
                     <div id="itemsList" class="space-y-2 mb-3"></div>
                     
                     <div class="flex gap-2 mb-2">
                         <input 
-                            type="text" 
-                            id="itemName" 
-                            placeholder="Item name (e.g., Sandwich)"
-                            class="flex-1 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                        >
-                        <input 
                             type="number" 
                             id="itemPrice" 
-                            placeholder="Price"
-                            class="w-24 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            placeholder="Item price"
+                            class="flex-1 bg-gray-700 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                             step="0.01"
                             min="0"
                         >
                         <button 
                             id="addItemBtn"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition">
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition font-semibold">
                             Add
                         </button>
                     </div>
@@ -291,21 +298,14 @@
 
         // Add Item to current person
         document.getElementById('addItemBtn').addEventListener('click', function() {
-            const itemName = document.getElementById('itemName').value.trim();
             const itemPrice = parseFloat(document.getElementById('itemPrice').value);
-
-            if (!itemName) {
-                alert('Please enter item name');
-                return;
-            }
 
             if (isNaN(itemPrice) || itemPrice <= 0) {
                 alert('Please enter valid price');
                 return;
             }
 
-            currentItems.push({ name: itemName, price: itemPrice });
-            document.getElementById('itemName').value = '';
+            currentItems.push({ price: itemPrice });
             document.getElementById('itemPrice').value = '';
             
             renderCurrentItems();
@@ -321,7 +321,7 @@
 
             container.innerHTML = currentItems.map((item, index) => `
                 <div class="flex justify-between items-center bg-gray-700 rounded-lg px-3 py-2">
-                    <span class="text-sm text-white">${item.name}</span>
+                    <span class="text-sm text-gray-300">Item ${index + 1}</span>
                     <div class="flex items-center gap-2">
                         <span class="text-sm font-semibold text-yellow-300">${item.price.toFixed(2)} EGP</span>
                         <button onclick="removeItem(${index})" class="text-red-400 hover:text-red-300">✕</button>
@@ -403,8 +403,8 @@
                                 <span class="font-bold text-lg text-blue-300">${person.name}</span>
                             </div>
                             <div class="text-gray-400 text-xs space-y-1 ml-8 mb-2">
-                                ${person.items.map(item => `
-                                    <div>• ${item.name}: <span class="text-white">${item.price.toFixed(2)} EGP</span></div>
+                                ${person.items.map((item, idx) => `
+                                    <div>• Item ${idx + 1}: <span class="text-white">${item.price.toFixed(2)} EGP</span></div>
                                 `).join('')}
                             </div>
                             <div class="text-gray-400 text-sm space-y-1 ml-8">
@@ -434,8 +434,10 @@
         function calculateAll() {
             if (people.length === 0) return;
 
-            const servicePercent = parseFloat(document.getElementById('servicePercent').value) || 0;
-            const taxPercent = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const servicePercent = document.getElementById('serviceToggle').checked ? 
+                (parseFloat(document.getElementById('servicePercent').value) || 0) : 0;
+            const taxPercent = document.getElementById('taxToggle').checked ? 
+                (parseFloat(document.getElementById('taxPercent').value) || 0) : 0;
 
             let totalSubtotal = 0;
             let totalServiceAmount = 0;
@@ -470,8 +472,10 @@
         document.getElementById('calculateEqualBtn').addEventListener('click', function() {
             const totalBill = parseFloat(document.getElementById('totalBillAmount').value);
             const numPeople = parseInt(document.getElementById('numPeople').value);
-            const servicePercent = parseFloat(document.getElementById('servicePercent').value) || 0;
-            const taxPercent = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const servicePercent = document.getElementById('serviceToggle').checked ? 
+                (parseFloat(document.getElementById('servicePercent').value) || 0) : 0;
+            const taxPercent = document.getElementById('taxToggle').checked ? 
+                (parseFloat(document.getElementById('taxPercent').value) || 0) : 0;
 
             if (isNaN(totalBill) || totalBill <= 0) {
                 alert('Please enter valid bill amount');
@@ -531,7 +535,6 @@
                 document.getElementById('servicePercent').value = '12';
                 document.getElementById('taxPercent').value = '14';
                 document.getElementById('personName').value = '';
-                document.getElementById('itemName').value = '';
                 document.getElementById('itemPrice').value = '';
                 document.getElementById('peopleList').innerHTML = '';
                 document.getElementById('summary').classList.add('hidden');
@@ -542,6 +545,8 @@
 
         document.getElementById('servicePercent').addEventListener('change', calculateAll);
         document.getElementById('taxPercent').addEventListener('change', calculateAll);
+        document.getElementById('serviceToggle').addEventListener('change', calculateAll);
+        document.getElementById('taxToggle').addEventListener('change', calculateAll);
 
         // Initialize
         renderCurrentItems();
